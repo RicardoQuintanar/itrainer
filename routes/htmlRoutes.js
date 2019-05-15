@@ -74,8 +74,23 @@ module.exports = function (app) {
     });
   });
 
-  // Render 404 page for any unmatched routes
+  app.get("/stats", isAuthenticated, function (req, res) {
+    db.Workout.findAll({
+      include: [db.User]
+    })
+      .then(function(dbStats) {
+        console.log(dbStats);
+        res.render("stats", {
+          title: "statistics",
+          customcss: `<link rel="stylesheet" href="/styles/stats.css"></link>`,
+          customjs: `<script type="text/javascript" src="/js/stats.js"></script>`,
+          workouts: dbStats
+        });       
+      });
+  });
+ // Render 404 page for any unmatched routes - DO NOT ADD ROUTES BELOW THIS FUNCTION
   app.get("*", function (req, res) {
     res.render("404");
   });
+
 };
